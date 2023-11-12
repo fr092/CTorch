@@ -1,0 +1,27 @@
+Day-1
+implement a class named tensor (done)
+
+define matrix multiplication, exponentiation (done)
+define element wise functions addition, subtraction, multiplication, division, log, exp, pow (done)
+
+initializing a mat with random values (done)
+initializing a mat with a specific value (done)
+
+implement activation functions tanh, sigmoid, ReLU, softmax, argmax (done)
+
+
+Day-2
+building an autograd engine (done)
+implement loss functions mean squared error, cross entropy (done)
+implement layers (done)
+Linear (done)
+
+
+->inf
+Implement other layers CNN, RNN (done), LSTM, Transformer, BatchNorm, Embedding, Flatten, Sequential
+
+
+left
+broadcasting (done)
+implement argmax
+backward prop of exponentiation, mse
