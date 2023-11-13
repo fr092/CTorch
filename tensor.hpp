@@ -410,6 +410,7 @@ class Tensor{
         
         Tensor* result = new Tensor;
         result->create(this->data.n_rows, this->data.n_cols);
+
         arma::dmat temp = this->data * (-1);
         temp = arma::exp(temp);
         temp = temp + 1;
@@ -430,6 +431,27 @@ class Tensor{
 
         }
         
+        return result;
+    }
+
+    Tensor* argmax(){
+
+        Tensor* result = new Tensor;
+        result->create(this->data.n_rows, 1);
+        result->isgrad = false;
+        
+        for(int i=0;i<this->data.n_rows;i++){
+            int maxi = -1e9;
+            int max_index = 0;
+            for(int j=0;j<this->data.n_cols;j++){
+                if(this->data(i, j) > maxi){
+                    maxi = this->data(i, j);
+                    max_index = j;
+                }
+            }
+            result->data(i, 0) = max_index;
+        }
+
         return result;
     }
 
@@ -495,6 +517,7 @@ class Tensor{
                     first->grad(i, 0) += 2*(first->data(i, 0) - second->data(i, 0));
 
                 first->grad /= second->data.n_rows;
+                first->grad = first->grad % result->grad;
             };
 
             result->_backward = _backward;
@@ -575,6 +598,7 @@ class Tensor{
         while(topo.empty() == false){
             Tensor* curr = topo.top();
             topo.top()->_backward(curr->prev, curr);
+            topo.pop();
         }
 
         return ;

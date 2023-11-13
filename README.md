@@ -1,1 +1,3 @@
-This is my project where I'm trying to create a deep learning library in C++
+# CTorch
+
+CTorch is a easy to use, simple and fairly optimized library that can be used to train neural networks in C++.
