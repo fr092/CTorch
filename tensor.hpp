@@ -440,6 +440,7 @@ class Tensor{
         arma::dmat temp = arma::exp(this->data) ;
         arma::dmat sum = arma::sum(temp, 1);
         result->data = temp.each_col()/sum;
+
         if(isgrad == true){
 
             result->prev.push_back(this);
@@ -479,13 +480,20 @@ class Tensor{
         }
 
         result->data(0, 0) /= y->data.n_rows; 
+        
 
         if(isgrad == true){
 
             result->prev.push_back(this);
+            result->prev.push_back(y);
             
             auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
                 Tensor* first = *(prev.begin());
+                Tensor* second = *(prev.end() - 1);
+
+                for(int i=0;i<second->data.n_rows;i++)
+                    first->grad(i, 0) += 2*(first->data(i, 0) - second->data(i, 0));
+
             };
 
             result->_backward = _backward;

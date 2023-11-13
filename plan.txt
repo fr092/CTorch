@@ -24,6 +24,6 @@ Implement other layers Linear (done), RNN (done), LSTM
 left
 broadcasting (done)
 implement argmax
-backward prop of exponentiation, mse
+backward prop of exponentiation, mse(done)
 final reading and testing
 implement LSTM
