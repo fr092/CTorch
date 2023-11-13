@@ -14,7 +14,7 @@ class Tensor{
     arma::dmat data;
     arma::dmat grad;
     std::vector<Tensor*> prev;
-    void(*_backward)(std::vector<Tensor*>,Tensor*) = nullptr;
+    void(*_backward)(Tensor*) = nullptr;
 
     void create(int rows, int cols, std::string ini="false", double scalar=0, std::string grad="true"){
         
@@ -53,11 +53,14 @@ class Tensor{
             
             if(isgrad == true){
 
-                auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                    Tensor* first = *prev.begin();
-                    Tensor* second = *(prev.end()-1);
+                auto _backward = [](Tensor* result){
+
+                    Tensor* first = *(result->prev.begin());
+                    Tensor* second = *(result->prev.end()-1);
+
                     first->grad += result->grad;
                     second->grad += arma::sum(result->grad, 0);
+
                     return ;
                 };
 
@@ -72,11 +75,14 @@ class Tensor{
 
             if(isgrad == true){
 
-                auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                    Tensor* first = *prev.begin();
-                    Tensor* second = *(prev.end()-1);
+                auto _backward = [](Tensor* result){
+
+                    Tensor* first = *(result->prev.begin());
+                    Tensor* second = *(result->prev.end()-1);
+
                     first->grad += result->grad;
                     second->grad += arma::sum(result->grad, 1);
+
                     return ;
                 };
 
@@ -91,11 +97,14 @@ class Tensor{
             
             if(isgrad == true){
 
-                auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                    Tensor* first = *prev.begin();
-                    Tensor* second = *(prev.end()-1);
+                auto _backward = [](Tensor* result){
+
+                    Tensor* first = *(result->prev.begin());
+                    Tensor* second = *(result->prev.end()-1);
+
                     first->grad += result->grad;
                     second->grad += result->grad;
+
                     return ;
                 };
                 
@@ -123,11 +132,14 @@ class Tensor{
 
             if(isgrad == true){
                 
-                auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                    Tensor* first = *prev.begin();
-                    Tensor* second = *(prev.end()-1);
+                auto _backward = [](Tensor* result){
+
+                    Tensor* first = *(result->prev.begin());
+                    Tensor* second = *(result->prev.end()-1);
+
                     first->grad += result->grad;
                     second->grad -= arma::sum(result->grad, 0);
+
                     return ;
                 };
 
@@ -142,11 +154,14 @@ class Tensor{
             
             if(isgrad == true){
 
-                auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                    Tensor* first = *prev.begin();
-                    Tensor* second = *(prev.end()-1);
+                auto _backward = [](Tensor* result){
+
+                    Tensor* first = *(result->prev.begin());
+                    Tensor* second = *(result->prev.end()-1);
+
                     first->grad += result->grad;
                     second->grad -= arma::sum(result->grad, 1);
+
                     return ;
                 };
 
@@ -161,11 +176,14 @@ class Tensor{
 
             if(isgrad == true){
 
-                auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                    Tensor* first = *prev.begin();
-                    Tensor* second = *(prev.end()-1);
+                auto _backward = [](Tensor* result){
+
+                    Tensor* first = *(result->prev.begin());
+                    Tensor* second = *(result->prev.end()-1);
+
                     first->grad += result->grad;
                     second->grad -= result->grad;
+
                     return ;
                 };
                 
@@ -193,11 +211,14 @@ class Tensor{
             result->prev.push_back(this);
             result->prev.push_back(other);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
-                Tensor* second = *(prev.end()-1);
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+                Tensor* second = *(result->prev.end()-1);
+
                 first->grad += (second->data % result->grad);
                 second->grad += (first->data % result->grad);
+
                 return ;
             };
             
@@ -219,11 +240,14 @@ class Tensor{
             result->prev.push_back(this);
             result->prev.push_back(other);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
-                Tensor* second = *(prev.end()-1);
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+                Tensor* second = *(result->prev.end()-1);
+
                 first->grad += (result->grad / second->data);
                 second->grad -= ((first->data % result->grad) / arma::pow(second->data, 2));
+
                 return ;
             };
             
@@ -244,9 +268,12 @@ class Tensor{
 
             result->prev.push_back(this);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+
                 first->grad += (result->grad / first->data);
+
                 return ;
             };
             
@@ -267,9 +294,12 @@ class Tensor{
 
             result->prev.push_back(this);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+
                 first->grad += (result->data % result->grad);
+
                 return ;
             };
             
@@ -293,10 +323,13 @@ class Tensor{
             result->prev.push_back(this);
             result->prev.push_back(temp);
 
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
-                Tensor* second = *(prev.end()-1);
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+                Tensor* second = *(result->prev.end()-1);
+
                 first->grad += (second->data(0, 0) * ((result->data / first->data) % result->grad));
+
                 return ;
             };
             
@@ -318,13 +351,17 @@ class Tensor{
             result->prev.push_back(this);
             result->prev.push_back(other);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
-                Tensor* second = *(prev.end() - 1);
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+                Tensor* second = *(result->prev.end()-1);
+
                 arma::dmat temp1 = second->data.t();
                 arma::dmat temp2 = first->data.t();
+
                 first->grad += result->grad * temp1;
                 second->grad += temp2 * result->grad;
+
                 return ;
             };
             
@@ -344,8 +381,8 @@ class Tensor{
 
             result->prev.push_back(this);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
+            auto _backward = [](Tensor* result){
+                Tensor* first = *(result->prev.begin());
                 return ;
             };
             
@@ -365,9 +402,12 @@ class Tensor{
 
             result->prev.push_back(this);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+
                 first->grad += ((1 - arma::pow(result->data, 2)) % result->grad);
+
                 return ;
             };
             
@@ -388,14 +428,17 @@ class Tensor{
 
             result->prev.push_back(this);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+
                 for(int i=0;i<first->data.n_rows;i++){
                     for(int j=0;j<first->data.n_cols;j++){
                         if(result->data(i,j)>0)
                             first->grad(i,j) += result->grad(i,j);
                     }
                 }
+
                 return ;
             };
             
@@ -421,9 +464,12 @@ class Tensor{
 
             result->prev.push_back(this);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+
                 first->grad += ((result->data % (1 - result->data)) % result->grad);
+
                 return ;
             };
             
@@ -467,9 +513,12 @@ class Tensor{
 
             result->prev.push_back(this);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *prev.begin();
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+
                 arma::dmat temp = first->grad;
+
                 for(int i=0;i<temp.n_rows;i++){
                     for(int j=0;j<temp.n_cols;j++){
                         for(int k=0;k<temp.n_cols;k++){
@@ -481,6 +530,7 @@ class Tensor{
                     }
                 }
                 first->grad = temp % result->grad;
+
                 return ;
             };
             
@@ -509,15 +559,17 @@ class Tensor{
             result->prev.push_back(this);
             result->prev.push_back(y);
             
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *(prev.begin());
-                Tensor* second = *(prev.end() - 1);
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+                Tensor* second = *(result->prev.end()-1);
 
                 for(int i=0;i<second->data.n_rows;i++)
                     first->grad(i, 0) += 2*(first->data(i, 0) - second->data(i, 0));
-
                 first->grad /= second->data.n_rows;
                 first->grad = first->grad % result->grad;
+
+                return ;
             };
 
             result->_backward = _backward;
@@ -550,15 +602,20 @@ class Tensor{
             result->prev.push_back(this);
             result->prev.push_back(y);
 
-            auto _backward = [](std::vector<Tensor*> prev, Tensor* result){
-                Tensor* first = *(prev.begin());
-                Tensor* second = *(prev.end()-1);
+            auto _backward = [](Tensor* result){
+
+                Tensor* first = *(result->prev.begin());
+                Tensor* second = *(result->prev.end()-1);
+
                 arma::dmat temp = arma::exp(first->data);
                 temp = temp.each_col() / arma::sum(temp, 1);
+
                 for(int i=0;i<first->data.n_rows;i++)
                     temp(i, second->data(i, 0)) -= 1;
                 temp /= second->data.n_rows;
                 first->grad += temp;
+
+                return ;
             };
 
             result->_backward = _backward;
@@ -596,8 +653,7 @@ class Tensor{
         this->grad += 1;
 
         while(topo.empty() == false){
-            Tensor* curr = topo.top();
-            topo.top()->_backward(curr->prev, curr);
+            topo.top()->_backward(topo.top());
             topo.pop();
         }
 

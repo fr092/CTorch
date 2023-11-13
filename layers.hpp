@@ -97,7 +97,6 @@ class RNN{
         out = out->operator+(output_bias);
         
         return out;
-
     }
 
     std::vector<Tensor*> parameters(){
