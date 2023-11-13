@@ -494,6 +494,7 @@ class Tensor{
                 for(int i=0;i<second->data.n_rows;i++)
                     first->grad(i, 0) += 2*(first->data(i, 0) - second->data(i, 0));
 
+                first->grad /= second->data.n_rows;
             };
 
             result->_backward = _backward;
