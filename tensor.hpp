@@ -1,6 +1,8 @@
-#include<iostream>
-#include<armadillo>
-#include<vector>
+#include <iostream>
+#include <armadillo>
+#include <vector>
+#include <stack>
+#include <map>
 
 class Tensor{
 
@@ -497,7 +499,7 @@ class Tensor{
 
         Tensor* result = new Tensor;
         result->create(1, 1);
-        
+
         arma::dmat temp = this->data;
         temp = arma::exp(temp);
         temp = temp.each_col() / arma::sum(temp, 1);
@@ -532,6 +534,41 @@ class Tensor{
         }
 
         return result;
+    }
+
+    void build_topo(Tensor* node, std::stack<Tensor*> &topo, std::map<Tensor*,bool> &visited){
+
+        if(visited[node] == false){
+            
+            visited[node] = true;
+
+            for(auto i:node->prev){
+                if(i->isgrad == true)
+                    build_topo(i, topo, visited);
+            }
+            
+            topo.push(node);
+
+        }
+
+        return ;
+    }
+
+    void backward(){
+
+        std::stack<Tensor*> topo;
+        std::map<Tensor*,bool> visited;
+
+        build_topo(this, topo, visited);
+
+        this->grad += 1;
+
+        while(topo.empty() == false){
+            Tensor* curr = topo.top();
+            topo.top()->_backward(curr->prev, curr);
+        }
+
+        return ;
     }
 
 };
