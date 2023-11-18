@@ -625,6 +625,14 @@ class Tensor{
         return result;
     }
 
+    void set_grad_to_zero(std::vector<Tensor*> &parameters){
+
+        for(auto i:parameters)
+            i->grad -= i->grad;
+
+        return ;
+    }
+
     void build_topo(Tensor* node, std::stack<Tensor*> &topo, std::map<Tensor*,bool> &visited){
 
         if(visited[node] == false){
@@ -655,6 +663,16 @@ class Tensor{
         while(topo.empty() == false){
             topo.top()->_backward(topo.top());
             topo.pop();
+        }
+
+        return ;
+    }
+
+    void backpropagate(int lr, std::vector<Tensor*> &parameters){
+
+        for(auto i:parameters){
+            if(i->isgrad == true)
+                i->data -= lr*i->grad;
         }
 
         return ;
