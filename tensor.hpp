@@ -51,7 +51,7 @@ class Tensor{
 
             result->data = this->data.each_row() + other->data;
             
-            if(isgrad == true){
+            if(result->isgrad == true){
 
                 auto _backward = [](Tensor* result){
 
@@ -73,7 +73,7 @@ class Tensor{
 
             result->data = this->data.each_col() + other->data;
 
-            if(isgrad == true){
+            if(result->isgrad == true){
 
                 auto _backward = [](Tensor* result){
 
@@ -95,7 +95,7 @@ class Tensor{
 
             result->data = this->data + other->data;
             
-            if(isgrad == true){
+            if(result->isgrad == true){
 
                 auto _backward = [](Tensor* result){
 
@@ -113,7 +113,7 @@ class Tensor{
             }
         }
 
-        if(isgrad == true){
+        if(result->isgrad == true){
             result->prev.push_back(this);
             result->prev.push_back(other);
         }
@@ -130,7 +130,7 @@ class Tensor{
             
             result->data = this->data.each_row() - other->data;
 
-            if(isgrad == true){
+            if(result->isgrad == true){
                 
                 auto _backward = [](Tensor* result){
 
@@ -152,7 +152,7 @@ class Tensor{
             
             result->data = this->data.each_col() - other->data;
             
-            if(isgrad == true){
+            if(result->isgrad == true){
 
                 auto _backward = [](Tensor* result){
 
@@ -174,7 +174,7 @@ class Tensor{
             
             result->data = this->data - other->data;
 
-            if(isgrad == true){
+            if(result->isgrad == true){
 
                 auto _backward = [](Tensor* result){
 
@@ -192,7 +192,7 @@ class Tensor{
             }
         }
         
-        if(isgrad == true){
+        if(result->isgrad == true){
             result->prev.push_back(this);
             result->prev.push_back(other);
         }
@@ -206,7 +206,7 @@ class Tensor{
         result->create(this->data.n_rows, this->data.n_cols);
         result->data = this->data % other->data;
 
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             result->prev.push_back(other);
@@ -235,7 +235,7 @@ class Tensor{
         result->create(this->data.n_rows, this->data.n_cols);
         result->data = this->data / other->data;
 
-        if(isgrad == true){
+        if(result->isgrad == true){
             
             result->prev.push_back(this);
             result->prev.push_back(other);
@@ -264,7 +264,7 @@ class Tensor{
         result->create(this->data.n_rows, this->data.n_cols);
         result->data = arma::log(this->data);
 
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             
@@ -290,7 +290,7 @@ class Tensor{
         result->create(this->data.n_rows, this->data.n_cols);
         result->data = arma::exp(this->data);
 
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             
@@ -318,7 +318,7 @@ class Tensor{
         Tensor* temp = new Tensor;
         temp->data = scalar;
 
-        if(isgrad == true){
+        if(result->isgrad == true){
             
             result->prev.push_back(this);
             result->prev.push_back(temp);
@@ -346,7 +346,7 @@ class Tensor{
         result->create(this->data.n_rows, this->data.n_cols);
         result->data = this->data * other->data;
 
-        if(isgrad = true){
+        if(result->isgrad = true){
             
             result->prev.push_back(this);
             result->prev.push_back(other);
@@ -377,7 +377,7 @@ class Tensor{
         Tensor* result = new Tensor;
         result->create(this->data.n_rows, this->data.n_cols);
         result->data = powmat(this->data, scalar);
-        if(isgrad){
+        if(result->isgrad){
 
             result->prev.push_back(this);
             
@@ -398,7 +398,7 @@ class Tensor{
         Tensor* result = new Tensor;
         result->create(this->data.n_rows, this->data.n_cols);
         result->data = arma::tanh(this->data);
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             
@@ -424,7 +424,7 @@ class Tensor{
         result->create(this->data.n_rows, this->data.n_cols);
         double max = this->data.max();
         result->data = arma::clamp(this->data, 0, max);
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             
@@ -460,7 +460,7 @@ class Tensor{
         temp = 1/temp;
         result->data = temp;
 
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             
@@ -509,7 +509,7 @@ class Tensor{
         arma::dmat sum = arma::sum(temp, 1);
         result->data = temp.each_col()/sum;
 
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             
@@ -554,7 +554,7 @@ class Tensor{
         result->data(0, 0) /= y->data.n_rows; 
         
 
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             result->prev.push_back(y);
@@ -597,7 +597,7 @@ class Tensor{
         result->data = arma::sum(result_probs, 0);
         result->data /= y->data.n_rows;
 
-        if(isgrad == true){
+        if(result->isgrad == true){
 
             result->prev.push_back(this);
             result->prev.push_back(y);
