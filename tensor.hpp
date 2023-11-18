@@ -42,6 +42,13 @@ class Tensor{
         return ;
     }
 
+    void operator=(Tensor* other){
+        
+        this->data = other->data;
+
+        return ;
+    }
+
     Tensor* operator+(Tensor* other){
         
         Tensor* result = new Tensor;
@@ -567,7 +574,8 @@ class Tensor{
                 for(int i=0;i<second->data.n_rows;i++)
                     first->grad(i, 0) += 2*(first->data(i, 0) - second->data(i, 0));
                 first->grad /= second->data.n_rows;
-                first->grad = first->grad % result->grad;
+                //first->grad = first->grad % result->grad;
+                first->grad = first->grad;
 
                 return ;
             };
@@ -625,10 +633,9 @@ class Tensor{
         return result;
     }
 
-    void set_grad_to_zero(std::vector<Tensor*> &parameters){
+    void set_grad_to_zero(){
 
-        for(auto i:parameters)
-            i->grad -= i->grad;
+        this->grad -= this->grad;
 
         return ;
     }
@@ -668,7 +675,7 @@ class Tensor{
         return ;
     }
 
-    void backpropagate(int lr, std::vector<Tensor*> &parameters){
+    void backpropagate(float lr, std::vector<Tensor*> &parameters){
 
         for(auto i:parameters){
             if(i->isgrad == true)

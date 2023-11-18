@@ -36,14 +36,13 @@ class Linear{
         return out;
     }
 
-    std::vector<Tensor*> parameters(){
-        
-        std::vector<Tensor*> out;
+    void parameters(std::vector<Tensor*> &out){
+
         out.push_back(weight);
         if(is_bias)
             out.push_back(bias);
         
-        return out;
+        return ;
     }
 
 };
@@ -99,16 +98,15 @@ class RNN{
         return out;
     }
 
-    std::vector<Tensor*> parameters(){
+    void parameters(std::vector<Tensor*> &out){
 
-        std::vector<Tensor*> out;
         out.push_back(input_weight);
         out.push_back(hidden_weight);
         out.push_back(hidden_bias);
         out.push_back(output_weight);
         out.push_back(output_bias);
         
-        return out;
+        return ;
     }
 
 };
